@@ -1,10 +1,8 @@
-using UnityEngine;
-
 public class PlayerState
 {
     protected Player _player;
     protected StateMachine _stateMachine;
-    
+
     protected string _animationName;
 
 
