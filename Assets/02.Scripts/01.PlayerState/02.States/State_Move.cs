@@ -1,4 +1,4 @@
-public class State_Move : PlayerState
+public class State_Move : GroundState
 {
     public State_Move(Player player, StateMachine stateMachine, string animationName) :  base(player, stateMachine, animationName)
     {
@@ -9,17 +9,6 @@ public class State_Move : PlayerState
     public override void Update()
     {
         base.Update();
-        if (!_player.IsGrounded() && _player.IsFalling())
-        {
-            _stateMachine.ChangeState(_player.StateFall);
-            return;
-        }
-        
-        if (_player.IsGrounded() && _player.JumpInput)
-        {
-            _stateMachine.ChangeState(_player.StateJump);
-            return;
-        }
         
         float movement = _player.MovementInput;
         if (movement == 0)

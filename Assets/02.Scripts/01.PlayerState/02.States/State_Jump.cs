@@ -1,5 +1,5 @@
 using UnityEngine;
-public class State_Jump : PlayerState
+public class State_Jump : OnAirState
 {
     public State_Jump(Player player, StateMachine stateMachine, string animationName) : base(player, stateMachine, animationName)
     {
@@ -15,8 +15,6 @@ public class State_Jump : PlayerState
     public override void Update()
     {
         base.Update();
-        float movement = _player.MovementInput;
-        _player.SetVelocity(movement * _player.MoveSpeed);
         if (_player.IsFalling())
         {
             _stateMachine.ChangeState(_player.StateFall);

@@ -1,5 +1,4 @@
-
-public class State_Fall : PlayerState
+public class State_Fall : OnAirState
 {
     public State_Fall(Player player, StateMachine stateMachine, string animationName) : base(player, stateMachine, animationName)
     {
@@ -9,8 +8,6 @@ public class State_Fall : PlayerState
     public override void Update()
     {
         base.Update();
-        float movement = _player.MovementInput;
-        _player.SetVelocity(movement * _player.MoveSpeed);
         if (_player.IsGrounded())
         {
             if (_player.MovementInput == 0)
