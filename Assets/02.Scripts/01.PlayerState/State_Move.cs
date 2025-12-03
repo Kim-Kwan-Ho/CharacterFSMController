@@ -9,7 +9,12 @@ public class State_Move : PlayerState
     public override void Update()
     {
         base.Update();
-
+        if (!_player.IsGrounded() && _player.IsFalling())
+        {
+            _stateMachine.ChangeState(_player.StateFall);
+            return;
+        }
+        
         if (_player.IsGrounded() && _player.JumpInput)
         {
             _stateMachine.ChangeState(_player.StateJump);

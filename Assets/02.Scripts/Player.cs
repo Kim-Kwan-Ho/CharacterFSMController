@@ -13,10 +13,11 @@ public class Player : BaseBehaviour
     private State_Idle _stateIdle;
     public State_Idle StateIdle { get { return _stateIdle; } }
     private State_Move _stateMove;
-    public State_Move StateMove {get { return _stateMove; }}
+    public State_Move StateMove { get { return _stateMove; } }
     private State_Jump _stateJump;
-    public State_Jump StateJump {get { return _stateJump; }}
-
+    public State_Jump StateJump { get { return _stateJump; } }
+    private State_Fall _stateFall;
+    public State_Fall StateFall { get { return _stateFall; } }
 
 
     // Todo: Change This To Module
@@ -60,6 +61,7 @@ public class Player : BaseBehaviour
         _stateIdle = new State_Idle(this, _stateMachine, "Idle");
         _stateMove = new State_Move(this, _stateMachine, "Move");
         _stateJump = new State_Jump(this, _stateMachine, "Jump");
+        _stateFall = new State_Fall(this, _stateMachine, "Fall");
     }
     private void InitializeOthers()
     {

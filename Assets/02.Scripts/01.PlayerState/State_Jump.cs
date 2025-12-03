@@ -17,16 +17,10 @@ public class State_Jump : PlayerState
         base.Update();
         float movement = _player.MovementInput;
         _player.SetVelocity(movement * _player.MoveSpeed);
-        if (_player.IsGrounded() && _player.IsFalling())
+        if (_player.IsFalling())
         {
-            if (_player.MovementInput == 0)
-            {
-                _stateMachine.ChangeState(_player.StateIdle);
-            }
-            else
-            {
-                _stateMachine.ChangeState(_player.StateMove);
-            }
+            _stateMachine.ChangeState(_player.StateFall);
+            return;
         }
     }
 }
