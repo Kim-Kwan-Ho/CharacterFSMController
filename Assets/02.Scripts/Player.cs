@@ -18,7 +18,8 @@ public class Player : BaseBehaviour
     public State_Jump StateJump { get { return _stateJump; } }
     private State_Fall _stateFall;
     public State_Fall StateFall { get { return _stateFall; } }
-
+    private State_WallSlide _wallSlide;
+    public State_WallSlide WallSlide { get { return _wallSlide; } }
 
     // Todo: Change This To Module
     [Header("Stats")]
@@ -26,16 +27,24 @@ public class Player : BaseBehaviour
     public float MoveSpeed { get { return _moveSpeed; } }
     [SerializeField] private float _jumpPower;
     public float JumpPower {get { return _jumpPower; }}
-
+    [SerializeField] private float _wallDecreaseRatio;
+    public float WallDecreaseRatio {get { return _wallDecreaseRatio; }}
 
     [Header("Direction")]
     private bool _isFacingRight;
-
+    public bool IsFacingRight {get { return _isFacingRight; }}
 
     [Header("GroundCheck")]
     [SerializeField] private LayerMask _groundLayer;
     [SerializeField] private Vector2 _groundCheckOffSet;
     [SerializeField] private float _groundCheckDist;
+
+    [Header("WallCheck")]
+    [SerializeField] private LayerMask _wallLayer;
+    [SerializeField] private Vector2 _wallCheckTopOffSet;
+    [SerializeField] private Vector2 _wallCheckBottomOffSet;
+    [SerializeField] private float _wallCheckDist;
+
 
     // Todo: Change This To New Input System
     [Header("Input")]
@@ -58,10 +67,12 @@ public class Player : BaseBehaviour
     private void InitializeStates()
     {
         _stateMachine = new StateMachine();
+        // Todo: Change String -> AnimationHash
         _stateIdle = new State_Idle(this, _stateMachine, "Idle");
         _stateMove = new State_Move(this, _stateMachine, "Move");
         _stateJump = new State_Jump(this, _stateMachine, "Jump");
         _stateFall = new State_Fall(this, _stateMachine, "Fall");
+        _wallSlide = new State_WallSlide(this, _stateMachine, "WallSlide");
     }
     private void InitializeOthers()
     {
@@ -89,9 +100,13 @@ public class Player : BaseBehaviour
         _rigid.velocity = targetVel;
         CheckDirection(x);
     }
-    public void SetForce(Vector2 force ,ForceMode2D forceMode)
+    public void SetForce(Vector2 force, ForceMode2D forceMode)
     {
         _rigid.AddForce(force, forceMode);
+    }
+    public void ChangeVelocityByRatio(float ratio)
+    {
+        _rigid.velocity = _rigid.velocity * ratio;
     }
     private void CheckDirection(float x)
     {
@@ -114,18 +129,38 @@ public class Player : BaseBehaviour
     }
     public bool IsGrounded()
     {
-        return Physics2D.Raycast((Vector2)transform.position - _groundCheckOffSet, Vector2.down, _groundCheckDist, _groundLayer); ;
+        return Physics2D.Raycast((Vector2)transform.position + _groundCheckOffSet, Vector2.down, _groundCheckDist, _groundLayer);
     }
     public bool IsFalling()
     {
         return _rigid.velocity.y <= 0;
     }
+
+    public bool CanSlideWall()
+    {
+        Vector2 direction = _isFacingRight ? Vector2.right : Vector2.left;
+        return Physics2D.Raycast((Vector2)transform.position + _wallCheckTopOffSet, direction, _wallCheckDist, _wallLayer)
+        && Physics2D.Raycast((Vector2)transform.position + _wallCheckBottomOffSet, direction, _wallCheckDist, _wallLayer);
+
+    }
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
+        // Jump
         Gizmos.color = Color.red;
-        var start = transform.position - (Vector3)_groundCheckOffSet;
+        var start = transform.position + (Vector3)_groundCheckOffSet;
         var end = start + ((Vector3.down) * _groundCheckDist);
+        Gizmos.DrawLine(start, end);
+
+        // Wall Check
+        Vector2 direction = _isFacingRight ? Vector2.right : Vector2.left;
+        Gizmos.color = Color.blue;
+        start = transform.position + (Vector3)_wallCheckTopOffSet;
+        end = start + (Vector3)(direction * _wallCheckDist);
+        Gizmos.DrawLine(start, end);
+
+        start = transform.position + (Vector3)_wallCheckBottomOffSet;
+        end = start + (Vector3)(direction * _wallCheckDist);
         Gizmos.DrawLine(start, end);
     }
     protected override void OnBindField()

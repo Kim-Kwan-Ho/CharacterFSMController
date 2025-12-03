@@ -13,12 +13,21 @@ public class State_Fall : OnAirState
             if (_player.MovementInput == 0)
             {
                 _stateMachine.ChangeState(_player.StateIdle);
+                return;
             }
             else
             {
                 _stateMachine.ChangeState(_player.StateMove);
+                return;
             }
         }
+
+        if (_player.CanSlideWall())
+        {
+            _stateMachine.ChangeState(_player.WallSlide);
+            return;
+        }
+
     }
 
     
