@@ -1,10 +1,8 @@
 public class State_Move : PlayerState
 {
-    public State_Move(Player player, StateMachine stateMachine, string animationName)
+    public State_Move(Player player, StateMachine stateMachine, string animationName) :  base(player, stateMachine, animationName)
     {
-        _player = player;
-        _stateMachine = stateMachine;
-        _animationName = animationName;
+        
     }
 
 

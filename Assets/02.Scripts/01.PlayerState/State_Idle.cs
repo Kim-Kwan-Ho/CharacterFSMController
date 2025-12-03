@@ -1,10 +1,8 @@
 public class State_Idle : PlayerState
 {
-    public State_Idle(Player player, StateMachine stateMachine, string animationName)
+    public State_Idle(Player player, StateMachine stateMachine, string animationName) : base(player, stateMachine, animationName)
     {
-        _player = player;
-        _stateMachine = stateMachine;
-        _animationName = animationName;
+        
     }
 
     public override void EnterState()
