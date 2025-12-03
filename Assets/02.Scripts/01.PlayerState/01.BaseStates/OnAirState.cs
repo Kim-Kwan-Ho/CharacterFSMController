@@ -9,7 +9,10 @@ public class OnAirState : PlayerState
     {
         base.Update();
         float movement = _player.MovementInput;
-        _player.SetVelocity(movement * _player.MoveSpeed); 
+        if (movement != 0)
+        {
+            _player.SetVelocity(movement * _player.MoveSpeed); 
+        }
     }
 
 }

@@ -27,6 +27,11 @@ public class State_WallSlide : PlayerState
             return;
         }
 
+        if (_player.JumpInput)
+        {
+            _stateMachine.ChangeState(_player.WallJump);
+            return;
+        }
         _player.ChangeVelocityByRatio(_player.WallDecreaseRatio);
     }
     

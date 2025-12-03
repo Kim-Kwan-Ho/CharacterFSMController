@@ -20,6 +20,10 @@ public class Player : BaseBehaviour
     public State_Fall StateFall { get { return _stateFall; } }
     private State_WallSlide _wallSlide;
     public State_WallSlide WallSlide { get { return _wallSlide; } }
+    private State_WallJump _wallJump;
+    public State_WallJump WallJump { get { return _wallJump; } }
+
+
 
     // Todo: Change This To Module
     [Header("Stats")]
@@ -29,6 +33,10 @@ public class Player : BaseBehaviour
     public float JumpPower {get { return _jumpPower; }}
     [SerializeField] private float _wallDecreaseRatio;
     public float WallDecreaseRatio {get { return _wallDecreaseRatio; }}
+    [SerializeField] private float _wallJumpPower;
+    public float WallJumpPower { get { return _wallJumpPower; } }
+    [SerializeField] private Vector2 _wallJumpDirection;
+    public Vector2 WallJumpDirection { get { return _wallJumpDirection; } }
 
     [Header("Direction")]
     private bool _isFacingRight;
@@ -73,6 +81,7 @@ public class Player : BaseBehaviour
         _stateJump = new State_Jump(this, _stateMachine, "Jump");
         _stateFall = new State_Fall(this, _stateMachine, "Fall");
         _wallSlide = new State_WallSlide(this, _stateMachine, "WallSlide");
+        _wallJump = new State_WallJump(this, _stateMachine, "WallJump");
     }
     private void InitializeOthers()
     {
@@ -103,6 +112,7 @@ public class Player : BaseBehaviour
     public void SetForce(Vector2 force, ForceMode2D forceMode)
     {
         _rigid.AddForce(force, forceMode);
+        CheckDirection(force.x);
     }
     public void ChangeVelocityByRatio(float ratio)
     {
@@ -153,14 +163,21 @@ public class Player : BaseBehaviour
         Gizmos.DrawLine(start, end);
 
         // Wall Check
-        Vector2 direction = _isFacingRight ? Vector2.right : Vector2.left;
         Gizmos.color = Color.blue;
+        Vector2 direction = _isFacingRight ? Vector2.right : Vector2.left;
         start = transform.position + (Vector3)_wallCheckTopOffSet;
         end = start + (Vector3)(direction * _wallCheckDist);
         Gizmos.DrawLine(start, end);
 
         start = transform.position + (Vector3)_wallCheckBottomOffSet;
         end = start + (Vector3)(direction * _wallCheckDist);
+        Gizmos.DrawLine(start, end);
+
+        // Wall Jump
+        Gizmos.color = Color.green;
+        start = transform.position;
+        direction = _isFacingRight ? new Vector2(-_wallJumpDirection.x, _wallJumpDirection.y) : _wallJumpDirection;
+        end = start + (Vector3)(direction);
         Gizmos.DrawLine(start, end);
     }
     protected override void OnBindField()
