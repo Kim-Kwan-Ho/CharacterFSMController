@@ -14,6 +14,8 @@ public class Player : BaseBehaviour
     public State_Idle StateIdle { get { return _stateIdle; } }
     private State_Move _stateMove;
     public State_Move StateMove { get { return _stateMove; } }
+    private State_Run _stateRun;
+    public State_Run StateRun { get { return _stateRun; } }
     private State_Jump _stateJump;
     public State_Jump StateJump { get { return _stateJump; } }
     private State_Fall _stateFall;
@@ -24,11 +26,12 @@ public class Player : BaseBehaviour
     public State_WallJump StateWallJump { get { return _stateWallJump; } }
 
 
-
     // Todo: Change This To Module
     [Header("Stats")]
     [SerializeField] private float _moveSpeed;
     public float MoveSpeed { get { return _moveSpeed; } }
+    [SerializeField] private float _runSpeed;
+    public float RunSpeed { get { return _runSpeed; } }
     [SerializeField] private float _jumpPower;
     public float JumpPower {get { return _jumpPower; }}
     [SerializeField] private float _wallDecreaseRatio;
@@ -58,6 +61,8 @@ public class Player : BaseBehaviour
     [Header("Input")]
     private float _movementInput;
     public float MovementInput { get { return _movementInput; } }
+    private bool _runInput;
+    public bool RunInput { get { return _runInput; } }
     private bool _jumpInput;
     public bool JumpInput { get { return _jumpInput; } }
 
@@ -78,10 +83,11 @@ public class Player : BaseBehaviour
         // Todo: Change String -> AnimationHash
         _stateIdle = new State_Idle(this, _stateMachine, "Idle");
         _stateMove = new State_Move(this, _stateMachine, "Move");
+        _stateRun = new State_Run(this, _stateMachine, "Run");
         _stateJump = new State_Jump(this, _stateMachine, "Jump");
         _stateFall = new State_Fall(this, _stateMachine, "Fall");
-        _stateWallSlide = new State_WallSlide(this, _stateMachine, "StateWallSlide");
-        _stateWallJump= new State_WallJump(this, _stateMachine, "State");
+        _stateWallSlide = new State_WallSlide(this, _stateMachine, "WallSlide");
+        _stateWallJump = new State_WallJump(this, _stateMachine, "WallJump");
     }
     private void InitializeOthers()
     {
@@ -136,6 +142,7 @@ public class Player : BaseBehaviour
     {
         _movementInput = Input.GetAxis("Horizontal");
         _jumpInput = Input.GetButtonDown("Jump");
+        _runInput = Input.GetKey(KeyCode.LeftShift);
     }
     public bool IsGrounded()
     {
