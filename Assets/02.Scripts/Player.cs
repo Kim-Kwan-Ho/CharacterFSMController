@@ -18,10 +18,10 @@ public class Player : BaseBehaviour
     public State_Jump StateJump { get { return _stateJump; } }
     private State_Fall _stateFall;
     public State_Fall StateFall { get { return _stateFall; } }
-    private State_WallSlide _wallSlide;
-    public State_WallSlide WallSlide { get { return _wallSlide; } }
-    private State_WallJump _wallJump;
-    public State_WallJump WallJump { get { return _wallJump; } }
+    private State_WallSlide _stateWallSlide;
+    public State_WallSlide StateWallSlide { get { return _stateWallSlide; } }
+    private State_WallJump _stateWallJump;
+    public State_WallJump StateWallJump { get { return _stateWallJump; } }
 
 
 
@@ -80,8 +80,8 @@ public class Player : BaseBehaviour
         _stateMove = new State_Move(this, _stateMachine, "Move");
         _stateJump = new State_Jump(this, _stateMachine, "Jump");
         _stateFall = new State_Fall(this, _stateMachine, "Fall");
-        _wallSlide = new State_WallSlide(this, _stateMachine, "WallSlide");
-        _wallJump = new State_WallJump(this, _stateMachine, "WallJump");
+        _stateWallSlide = new State_WallSlide(this, _stateMachine, "StateWallSlide");
+        _stateWallJump= new State_WallJump(this, _stateMachine, "State");
     }
     private void InitializeOthers()
     {
@@ -188,5 +188,4 @@ public class Player : BaseBehaviour
         _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 #endif
-
 }

@@ -24,7 +24,7 @@ public class State_WallJump : PlayerState
         }
         if (_player.CanSlideWall())
         {
-            _stateMachine.ChangeState(_player.WallSlide);
+            _stateMachine.ChangeState(_player.StateWallSlide);
             return;
         }
     }
