@@ -16,9 +16,16 @@ public class GroundState : PlayerState
             return;
         }
 
+
         if (_player.IsGrounded() && _player.JumpInput)
         {
             _stateMachine.ChangeState(_player.StateJump);
+            return;
+        }
+        
+        if (_player.DashInput && _player.CanDash)
+        {
+            _stateMachine.ChangeState(_player.StateDash);
             return;
         }
         

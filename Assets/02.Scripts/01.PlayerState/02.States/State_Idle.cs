@@ -8,7 +8,7 @@ public class State_Idle : GroundState
     public override void EnterState()
     {
         base.EnterState();
-        _player.SetVelocity(0);
+        _player.SetVelocityX(0);
     }
 
     public override void Update()

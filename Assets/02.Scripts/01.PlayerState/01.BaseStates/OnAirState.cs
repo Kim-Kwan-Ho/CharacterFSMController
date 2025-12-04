@@ -8,10 +8,17 @@ public class OnAirState : PlayerState
     public override void Update()
     {
         base.Update();
+        
         float movement = _player.MovementInput;
         if (movement != 0)
         {
-            _player.SetVelocity(movement * _player.MoveSpeed); 
+            _player.SetVelocityX(movement * _player.MoveSpeed);
+        }
+        
+        if (_player.DashInput && _player.CanDash)
+        {
+            _stateMachine.ChangeState(_player.StateDash);
+            return;
         }
     }
 

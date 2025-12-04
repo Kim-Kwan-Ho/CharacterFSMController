@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Player : BaseBehaviour
@@ -24,7 +25,8 @@ public class Player : BaseBehaviour
     public State_WallSlide StateWallSlide { get { return _stateWallSlide; } }
     private State_WallJump _stateWallJump;
     public State_WallJump StateWallJump { get { return _stateWallJump; } }
-
+    private State_Dash _stateDash;
+    public State_Dash StateDash { get { return _stateDash; } }
 
     // Todo: Change This To Module
     [Header("Stats")]
@@ -40,6 +42,11 @@ public class Player : BaseBehaviour
     public float WallJumpPower { get { return _wallJumpPower; } }
     [SerializeField] private Vector2 _wallJumpDirection;
     public Vector2 WallJumpDirection { get { return _wallJumpDirection; } }
+    [SerializeField] private float _dashDuration;
+    public float DashDuration { get { return _dashDuration; } }
+    [SerializeField] private float _dashSpeed;
+    public float DashSpeed { get { return _dashSpeed; } }
+
 
     [Header("Direction")]
     private bool _isFacingRight;
@@ -65,12 +72,19 @@ public class Player : BaseBehaviour
     public bool RunInput { get { return _runInput; } }
     private bool _jumpInput;
     public bool JumpInput { get { return _jumpInput; } }
+    private bool _dashInput;
+    public bool DashInput { get { return _dashInput; } }
 
 
 
+    // Todo: Change This To Skill System
+    [Header("Dash")]
+    [SerializeField] private float _dashCooltime;
+    private bool _canDash;
+    public bool CanDash { get { return _canDash; } }
+    private Coroutine _dashRoutine;
 
-
-#region 
+    #region 
     protected override void Initialize()
     {
         base.Initialize();
@@ -88,10 +102,12 @@ public class Player : BaseBehaviour
         _stateFall = new State_Fall(this, _stateMachine, "Fall");
         _stateWallSlide = new State_WallSlide(this, _stateMachine, "WallSlide");
         _stateWallJump = new State_WallJump(this, _stateMachine, "WallJump");
+        _stateDash = new State_Dash(this, _stateMachine, "Dash");
     }
     private void InitializeOthers()
     {
         _isFacingRight = true;
+        _canDash = true;
     }
 #endregion
     private void Start()
@@ -109,12 +125,20 @@ public class Player : BaseBehaviour
         _animator.SetBool(animatonName, isOn);
     }
 
-    public void SetVelocity(float x)
+    public void SetVelocityX(float x)
     {
         Vector2 targetVel = new Vector2(x, _rigid.velocity.y);
         _rigid.velocity = targetVel;
         CheckDirection(x);
     }
+    
+    public void SetVelocityXResetY(float x)
+    {
+        Vector2 targetVel = new Vector2(x, 0);
+        _rigid.velocity = targetVel;
+        CheckDirection(x);
+    }
+
     public void SetForce(Vector2 force, ForceMode2D forceMode)
     {
         _rigid.AddForce(force, forceMode);
@@ -136,13 +160,17 @@ public class Player : BaseBehaviour
         }
         _spriteRenderer.flipX = !_isFacingRight;
     }
-
+    public int GetFacingDirection()
+    {
+        return _isFacingRight ? 1 : -1;
+    }
     // Todo: Change This Input to New Input System
     private void HandleInput()
     {
         _movementInput = Input.GetAxis("Horizontal");
         _jumpInput = Input.GetButtonDown("Jump");
         _runInput = Input.GetKey(KeyCode.LeftShift);
+        _dashInput = Input.GetKeyDown(KeyCode.Q);
     }
     public bool IsGrounded()
     {
@@ -158,8 +186,29 @@ public class Player : BaseBehaviour
         Vector2 direction = _isFacingRight ? Vector2.right : Vector2.left;
         return Physics2D.Raycast((Vector2)transform.position + _wallCheckTopOffSet, direction, _wallCheckDist, _wallLayer)
         && Physics2D.Raycast((Vector2)transform.position + _wallCheckBottomOffSet, direction, _wallCheckDist, _wallLayer);
-
     }
+
+    public float GetGravityScale()
+    {
+        return _rigid.gravityScale;
+    }
+    public void ChangeGravityScale(float amount)
+    {
+        _rigid.gravityScale = amount;
+    }
+
+    public void StartDashCoolTime()
+    {
+        _canDash = false;
+        _dashRoutine = StartCoroutine(CoDashTimer());
+    }
+    
+    private IEnumerator CoDashTimer()
+    {
+        yield return new WaitForSeconds(_dashCooltime);
+        _canDash = true;
+    }
+
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {

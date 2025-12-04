@@ -20,7 +20,7 @@ public class State_Run : GroundState
             return;
         }
         
-        _player.SetVelocity(movement * _player.RunSpeed);
+        _player.SetVelocityX(movement * _player.RunSpeed);
     }
 
 

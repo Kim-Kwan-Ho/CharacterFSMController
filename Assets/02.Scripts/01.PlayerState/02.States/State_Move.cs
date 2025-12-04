@@ -22,7 +22,7 @@ public class State_Move : GroundState
             _stateMachine.ChangeState(_player.StateRun);
             return;
         }
-        _player.SetVelocity(movement * _player.MoveSpeed);
+        _player.SetVelocityX(movement * _player.MoveSpeed);
     }
 
 }
