@@ -7,7 +7,7 @@ public class Player : BaseBehaviour
     [SerializeField] private Animator _animator;
     [SerializeField] private Rigidbody2D _rigid;
     [SerializeField] private SpriteRenderer _spriteRenderer;
-
+    [SerializeField] private PlayerInputHandler _inputHandler;
     
     [Header("State Machine")]
     private StateMachine _stateMachine;
@@ -64,16 +64,10 @@ public class Player : BaseBehaviour
     [SerializeField] private float _wallCheckDist;
 
 
-    // Todo: Change This To New Input System
-    [Header("Input")]
-    private float _movementInput;
-    public float MovementInput { get { return _movementInput; } }
-    private bool _runInput;
-    public bool RunInput { get { return _runInput; } }
-    private bool _jumpInput;
-    public bool JumpInput { get { return _jumpInput; } }
-    private bool _dashInput;
-    public bool DashInput { get { return _dashInput; } }
+    public float MovementInput { get { return _inputHandler.MovementInput; } }
+    public bool RunInput { get { return _inputHandler.RunInput; } }
+    public bool JumpInput { get { return _inputHandler.JumpInput; } }
+    public bool DashInput { get { return _inputHandler.DashInput; } }
 
 
 
@@ -117,7 +111,7 @@ public class Player : BaseBehaviour
 
     private void Update()
     {
-        HandleInput();
+        //HandleInput();
         _stateMachine.UpdateState();
     }
     public void SetAnimatorBoolean(string animatonName, bool isOn)
@@ -164,14 +158,6 @@ public class Player : BaseBehaviour
     {
         return _isFacingRight ? 1 : -1;
     }
-    // Todo: Change This Input to New Input System
-    private void HandleInput()
-    {
-        _movementInput = Input.GetAxis("Horizontal");
-        _jumpInput = Input.GetButtonDown("Jump");
-        _runInput = Input.GetKey(KeyCode.LeftShift);
-        _dashInput = Input.GetKeyDown(KeyCode.Q);
-    }
     public bool IsGrounded()
     {
         return Physics2D.Raycast((Vector2)transform.position + _groundCheckOffSet, Vector2.down, _groundCheckDist, _groundLayer);
@@ -202,13 +188,12 @@ public class Player : BaseBehaviour
         _canDash = false;
         _dashRoutine = StartCoroutine(CoDashTimer());
     }
-    
+
     private IEnumerator CoDashTimer()
     {
         yield return new WaitForSeconds(_dashCooltime);
         _canDash = true;
     }
-
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
@@ -242,6 +227,7 @@ public class Player : BaseBehaviour
         _animator = GetComponent<Animator>();
         _rigid = GetComponent<Rigidbody2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
+        _inputHandler = GetComponent<PlayerInputHandler>();
     }
 #endif
 }
